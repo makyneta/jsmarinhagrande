@@ -79,12 +79,12 @@ gItems.forEach(el=>obs.observe(el));
 
 // LIGHTBOX
 const gData=[
-  {src:'assets/images/visitaparl.jpg', title:'Visita à Assembleia da República'},
-  {src:'assets/images/visitasedeps.jpg', title:'Visita à Sede Nacional do Partido Socialista'},
-  {src:'assets/images/50yjs.jpg', title:'50 anos da Juventude Socialista'},
-  {src:'assets/images/comissaopoliticadist.jpg', title:'1ª Comissão Política Distrital da JS Marinha Grande'},
-  {src:'assets/images/habitacaoreel.jpg', title:''},
-  {src:'assets/images/visitasantacasa.jpg', title:'Visita à Santa Casa da Misericórdia da Marinha Grande'},
+  {src:'assets/images/gallery/visitaparl.jpg', title:'Visita da JS da Marinha Grande à Assembleia da República'},
+  {src:'assets/images/gallery/visitasedeps.jpg', title:'Visita da JS da Marinha Grande à Sede Nacional do Partido Socialista'},
+  {src:'assets/images/gallery/50yjs.jpg', title:'50 anos da Juventude Socialista'},
+  {src:'assets/images/gallery/comissaopoliticadist.jpg', title:'1ª Comissão Política Distrital da JS Marinha Grande'},
+  {src:'assets/images/gallery/habitacao.jpg', title:'Vídeo Sobre a Crise da Habitação em Portugal'},
+  {src:'assets/images/gallery/visitasantacasa.jpg', title:'Visita da JS da Marinha Grande à Santa Casa da Misericórdia da Marinha Grande'},
 ];
 function openLightbox(i){
   const d=gData[i], lb=document.getElementById('lightbox');
