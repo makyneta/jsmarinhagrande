@@ -66,12 +66,14 @@
 <script>
 // Redirect map — silent, no UI
 const ROUTES = {
-  '/instagram': 'https://www.instagram.com/js.marinhagrande',
-  '/facebook':  'https://www.facebook.com/jsocialistamg',
-  '/jsnacional':'https://juventudesocialista.pt',
+  '/jsinstagram': 'https://www.instagram.com/js.marinhagrande',
+  '/jsfacebook':  'https://www.facebook.com/jsocialistamg',
+  '/juventudesocialistanacional':'https://juventudesocialista.pt',
 };
 
-const path = window.location.pathname.toLowerCase().replace(/\/$/, '');
+const path = window.location.pathname.toLowerCase()
+  .replace(/\/$/, '') // Remove trailing slash
+  .replace(/^\/jsmarinhagrande/, ''); // Remove GitHub Pages project prefix
 const dest  = ROUTES[path];
 if (dest) window.location.replace(dest);
 
