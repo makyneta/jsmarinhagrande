@@ -1,96 +1,132 @@
-// SCROLL PROGRESS
-const prog = document.getElementById('prog');
-window.addEventListener('scroll',()=>{
-  const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100;
-  prog.style.width = Math.min(pct,100)+'%';
-});
+var noticias = [
+  {
+    img: 'assets/images/gallery/50yjs.jpg',
+    tag: 'Evento',
+    title: '50 anos da JS celebrados na Marinha Grande',
+    text: 'A JS Marinha Grande marcou presença nas comemorações dos 50 anos da Juventude Socialista, num evento que juntou gerações de militantes e dirigentes. A celebração foi um momento de balanço e de renovação do compromisso com os valores socialistas, olhando para o futuro com a mesma determinação que caracteriza a JS desde a sua fundação.',
+  },
+  {
+    img: 'assets/images/gallery/comissaopoliticadist.jpg',
+    tag: 'Política',
+    title: 'Comissão Política Distrital reúne dirigentes',
+    text: 'Realizou-se mais uma reunião da Comissão Política Distrital da JS, com a participação dos representantes da JS Marinha Grande. Foram discutidas as estratégias de intervenção política no distrito, bem como as iniciativas a desenvolver nos próximos meses para fortalecer a presença da JS junto dos jovens de toda a região.',
+  },
+  {
+    img: 'assets/images/gallery/habitacaocapa.jpg',
+    tag: 'Habitação',
+    title: 'JS defende políticas de habitação jovem',
+    text: 'A habitação jovem continua a ser uma das principais preocupações da JS Marinha Grande. Numa iniciativa de sensibilização, os nossos militantes estiveram nas ruas a conversar com os jovens sobre as dificuldades no acesso à habitação e a apresentar as propostas socialistas para garantir uma casa digna para todos.',
+  },
+  {
+    img: 'assets/images/gallery/habitacao.jpg',
+    tag: 'Direitos',
+    title: 'Ação de rua sobre habitação juntou dezenas',
+    text: 'A JS Marinha Grande realizou uma ação de rua para alertar para a crise habitacional que afeta os jovens do concelho. A iniciativa contou com a participação de dezenas de militantes que distribuíram material informativo e recolheram testemunhos de jovens sobre as dificuldades em conseguir habitação digna e a preços acessíveis.',
+  },
+  {
+    img: 'assets/images/gallery/visitaparl.jpg',
+    tag: 'Instituições',
+    title: 'Visita à Assembleia da República',
+    text: 'Um grupo de militantes da JS Marinha Grande visitou a Assembleia da República, numa iniciativa que permitiu conhecer de perto o funcionamento do parlamento português. A visita incluiu uma reunião com deputados socialistas, onde foram discutidos temas como o ensino superior, o emprego jovem e as políticas de juventude.',
+  },
+  {
+    img: 'assets/images/gallery/visitasantacasa.jpg',
+    tag: 'Solidariedade',
+    title: 'Voluntariado na Santa Casa da Misericórdia',
+    text: 'A JS Marinha Grande organizou uma ação de voluntariado na Santa Casa da Misericórdia, onde os nossos militantes passaram uma tarde com os utentes da instituição. Foram momentos de partilha, convívio e solidariedade que reforçam o nosso compromisso com uma sociedade mais justa e inclusiva para todas as idades.',
+  },
+];
 
-// TYPEWRITER
-const titleText = 'Juventude Socialista';
-const nameEl = document.getElementById('orgName');
-titleText.split('').forEach((ch,i)=>{
-  const s = document.createElement('span');
-  s.className='char';
-  s.textContent = ch===' ' ? '\u00A0' : ch;
-  s.style.animationDelay=(0.55+i*.045)+'s';
-  nameEl.appendChild(s);
-});
+var isNoticiasPage = window.location.pathname.includes('noticias');
+var total = isNoticiasPage ? noticias.length : 3;
+var cards = document.querySelectorAll('.noticia-card');
+var modal = document.getElementById('newsModal');
+var modalImg = document.getElementById('nmImg');
+var modalTag = document.getElementById('nmTag');
+var modalTitle = document.getElementById('nmTitle');
+var modalText = document.getElementById('nmText');
 
-// PARTICLES
-const canvas=document.getElementById('particles');
-const ctx=canvas.getContext('2d');
-let W,H,pts=[];
-function resize(){ W=canvas.width=window.innerWidth; H=canvas.height=window.innerHeight; }
-resize(); window.addEventListener('resize',resize);
-function mkPt(){
-  return { x:Math.random()*W, y:Math.random()*H+H, r:Math.random()*2.5+.8,
-           vy:Math.random()*.55+.18, vx:(Math.random()-.5)*.3,
-           op:Math.random()*.22+.04, ph:Math.random()*Math.PI*2 };
-}
-for(let i=0;i<42;i++){ const p=mkPt(); p.y=Math.random()*H; pts.push(p); }
-(function draw(){
-  ctx.clearRect(0,0,W,H);
-  pts.forEach(p=>{
-    p.ph+=.018;
-    const o=p.op*(0.8+0.2*Math.sin(p.ph));
-    ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-    ctx.fillStyle=`rgba(192,24,26,${o})`; ctx.fill();
-    p.y-=p.vy; p.x+=p.vx;
-    if(p.y<-10) Object.assign(p,mkPt());
+noticias.slice(0, total).forEach(function (n, i) {
+  var card = cards[i];
+  if (!card) return;
+  card.querySelector('img').src = n.img;
+  card.querySelector('h3').textContent = n.title;
+  var p = card.querySelector('p');
+  if (p) p.textContent = n.text.length > 120 ? n.text.slice(0, 120) + '…' : n.text;
+  var tag = card.querySelector('.noticia-tag');
+  if (tag) tag.textContent = n.tag;
+  card.addEventListener('click', function (e) {
+    e.stopPropagation();
+    modalImg.src = n.img;
+    modalTag.textContent = n.tag;
+    modalTitle.textContent = n.title;
+    modalText.textContent = n.text;
+    modal.classList.add('open');
+    document.body.style.overflow = 'hidden';
   });
-  requestAnimationFrame(draw);
+});
+
+// REVEAL ON SCROLL
+var observer = new IntersectionObserver(function (entries) {
+  entries.forEach(function (e) {
+    if (e.isIntersecting) { e.target.classList.add('reveal'); observer.unobserve(e.target); }
+  });
+}, { threshold: .15 });
+
+document.querySelectorAll('.noticia-card, .contacto-btn').forEach(function (el) { observer.observe(el); });
+
+// MODAL
+function fecharModal() { modal.classList.remove('open'); document.body.style.overflow = ''; }
+modal.addEventListener('click', function (e) { if (e.target === modal) fecharModal(); });
+document.getElementById('nmClose').addEventListener('click', fecharModal);
+document.getElementById('nmFechar').addEventListener('click', fecharModal);
+document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && modal.classList.contains('open')) fecharModal(); });
+
+// PROGRESS BAR
+window.addEventListener('scroll', function () {
+  var d = document.body.scrollHeight - window.innerHeight;
+  document.getElementById('prog').style.width = (d > 0 ? (window.scrollY / d) * 100 : 0) + '%';
+});
+
+// NAV TOGGLE
+(function () {
+  var btn = document.getElementById('navToggle');
+  var links = document.getElementById('navLinks');
+  if (!btn || !links) return;
+  btn.addEventListener('click', function () {
+    btn.classList.toggle('active');
+    links.classList.toggle('open');
+    document.body.style.overflow = links.classList.contains('open') ? 'hidden' : '';
+  });
+  links.querySelectorAll('a').forEach(function (a) {
+    a.addEventListener('click', function () {
+      btn.classList.remove('active');
+      links.classList.remove('open');
+      document.body.style.overflow = '';
+    });
+  });
 })();
 
-// RIPPLE
-document.querySelectorAll('.link-btn').forEach(btn=>{
-  btn.addEventListener('click',function(e){
-    const c=document.createElement('span');
-    const d=Math.max(this.clientWidth,this.clientHeight), r=d/2;
-    const rect=this.getBoundingClientRect();
-    c.style.cssText=`position:absolute;border-radius:50%;pointer-events:none;z-index:0;width:${d}px;height:${d}px;left:${e.clientX-rect.left-r}px;top:${e.clientY-rect.top-r}px;background:rgba(192,24,26,.18);transform:scale(0);animation:rippleAnim .65s linear forwards;`;
-    this.appendChild(c); setTimeout(()=>c.remove(),700);
-  });
-});
+// HERO SLIDESHOW
+(function () {
+  var slides = document.querySelectorAll('.hero-slide');
+  var indicatorsWrap = document.querySelector('.hero-indicators');
+  if (!slides.length || !indicatorsWrap) return;
+  var idx = 0, totalSlides = slides.length;
+  for (var i = 0; i < totalSlides; i++) { var d = document.createElement('button'); d.className = 'hero-indicator'; d.setAttribute('aria-label','Slide '+(i+1)); if (i===0) d.classList.add('active'); indicatorsWrap.appendChild(d); }
+  var indicators = indicatorsWrap.querySelectorAll('.hero-indicator');
 
-// MAGNETIC BUTTONS
-document.querySelectorAll('.link-btn').forEach(btn=>{
-  btn.addEventListener('mousemove',function(e){
-    const rect=this.getBoundingClientRect();
-    const dx=(e.clientX-(rect.left+rect.width/2))*.07;
-    const dy=(e.clientY-(rect.top+rect.height/2))*.1;
-    this.style.transform=`translateY(${-4+dy}px) translateX(${dx}px) scale(1.012)`;
-  });
-  btn.addEventListener('mouseleave',function(){ this.style.transform=''; });
-});
+  function goTo(i) {
+    slides.forEach(function (s) { s.classList.remove('active'); });
+    indicators.forEach(function (d) { d.classList.remove('active'); });
+    idx = (i + totalSlides) % totalSlides;
+    slides[idx].classList.add('active');
+    if (indicators[idx]) indicators[idx].classList.add('active');
+  }
 
-// GALLERY STAGGER
-const gItems=document.querySelectorAll('.gallery-item');
-const obs=new IntersectionObserver(entries=>{
-  entries.forEach(entry=>{
-    if(entry.isIntersecting){
-      const i=[...gItems].indexOf(entry.target);
-      entry.target.style.animationDelay=(i*.09)+'s';
-      entry.target.classList.add('visible');
-      obs.unobserve(entry.target);
-    }
+  indicators.forEach(function (d, i) {
+    d.addEventListener('click', function () { goTo(i); });
   });
-},{threshold:.15});
-gItems.forEach(el=>obs.observe(el));
 
-// LIGHTBOX
-const gData=[
-  {src:'assets/images/gallery/visitaparl.jpg', title:'Visita da JS da Marinha Grande à Assembleia da República'},
-  {src:'assets/images/gallery/visitasedeps.jpg', title:'Visita da JS da Marinha Grande à Sede Nacional do Partido Socialista'},
-  {src:'assets/images/gallery/50yjs.jpg', title:'50 anos da Juventude Socialista'},
-  {src:'assets/images/gallery/comissaopoliticadist.jpg', title:'1ª Comissão Política Distrital da JS Marinha Grande'},
-  {src:'assets/images/gallery/habitacao.jpg', title:'Vídeo Sobre a Crise da Habitação em Portugal'},
-  {src:'assets/images/gallery/visitasantacasa.jpg', title:'Visita da JS da Marinha Grande à Santa Casa da Misericórdia da Marinha Grande'},
-];
-function openLightbox(i){
-  const d=gData[i], lb=document.getElementById('lightbox');
-  const wrap=document.getElementById('lbImgWrap');
-  wrap.innerHTML=`<img src="${d.src}" alt="${d.title}" style="width:100%;height:100%;object-fit:cover;display:block;">`;
-  document.getElementById('lbCaption').textContent=d.title;
-  lb.classList.add('open');
-}
-function closeLightbox(e){ if(e.target===document.getElementById('lightbox')) document.getElementById('lightbox').classList.remove('open'); }
+  setInterval(function () { goTo(idx + 1); }, 5000);
+})();
